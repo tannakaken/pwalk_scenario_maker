@@ -7,6 +7,7 @@ import {
   Scenario,
   addMobile,
   moveMobile,
+  removeMobile,
 } from "./models/scenario.model";
 import { Shape } from "konva/lib/Shape";
 
@@ -22,6 +23,7 @@ export const NakedApp = () => {
   const [duration, setDuration] = useState(10);
   const [current, setCurrent] = useState<Shape | undefined>(undefined);
   const [movedIndex, setMovedIndex] = useState(0);
+  const [selectedInex, setSelectedIndex] = useState(-1);
   const cancelModal = useCallback(() => {
     const mobile = scenario[now][movedIndex];
     if (current != undefined) {
@@ -48,6 +50,9 @@ export const NakedApp = () => {
           cursor: addMode ? "pointer" : "default",
         }}
         onClick={(event) => {
+          if (!addMode) {
+            return;
+          }
           setScenario(
             addMobile(event.evt.offsetX, event.evt.offsetY, scenario)
           );
@@ -59,11 +64,15 @@ export const NakedApp = () => {
             <Circle
               key={`circle-${index}`}
               fill="blue"
+              stroke={index === selectedInex ? "black" : undefined}
               opacity={1}
               x={mobile.x}
               y={mobile.y}
               radius={10}
               draggable={true}
+              onClick={() => {
+                setSelectedIndex(index);
+              }}
               onDragEnd={(event) => {
                 if (event.target instanceof Shape) {
                   setCurrent(event.target);
@@ -88,7 +97,9 @@ export const NakedApp = () => {
         >
           Back
         </button>
-        <span>{now}</span>
+        <span>
+          {now}/{scenario.length - 1}
+        </span>
         <button
           type="button"
           onClick={() => {
@@ -108,6 +119,14 @@ export const NakedApp = () => {
           }}
         >
           追加
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setScenario(removeMobile(selectedInex, scenario));
+          }}
+        >
+          削除
         </button>
       </div>
       <Modal

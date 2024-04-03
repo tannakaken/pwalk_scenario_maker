@@ -17,9 +17,11 @@ export type Scenario = readonly Snapshot[];
 export const INITIAL_SCENARIO: Scenario = [[]];
 
 export const addMobile = (x: number, y: number, scenario: Scenario): Scenario => {
-    const newScenario = [...scenario] as ScenarioInternal;
-    newScenario.forEach((snapshot) => {
-        snapshot.push({x, y});
+    const newScenario = [] as ScenarioInternal;
+    scenario.forEach((snapshot) => {
+        const newSnapshot = [...snapshot] as SnapshotInternal;
+        newSnapshot.push({x, y});
+        newScenario.push(newSnapshot);
     });
     return newScenario;
 }
@@ -34,13 +36,29 @@ export const moveMobile = (goalX: number, goalY: number, id: number, start: numb
         const x = startX + (goalX - startX) * i / diff;
         const y = startY + (goalY - startY) * i / diff;
         if ((start + i) < newScenario.length) {
-            newScenario[start + i][id].x = x;
-            newScenario[start + i][id].y = y;
+            const snapshot = [...newScenario[start + i]];
+            snapshot[id] = {x, y};
+            newScenario[start + i] = snapshot;
         } else {
             const lastSnapshot = [...newScenario[newScenario.length - 1]];            
             lastSnapshot[id] = {x, y}
             newScenario.push(lastSnapshot);
         }
     }
+    for (let i = end; i < newScenario.length; i++) {
+        const snapshot = [...newScenario[i]]
+        snapshot[id] = {x: goalX,y: goalY};
+        newScenario[i] = snapshot;
+    }
+    return newScenario;
+}
+
+export const removeMobile = (id: number, scenario: Scenario): Scenario => {
+    const newScenario = [] as ScenarioInternal;
+    scenario.forEach((snapshot) => {
+        const newSnapshot = [...snapshot] as SnapshotInternal;
+        newSnapshot.splice(id, 1)
+        newScenario.push(newSnapshot);
+    });
     return newScenario;
 }
