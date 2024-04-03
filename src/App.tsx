@@ -15,6 +15,10 @@ import { Shape } from "konva/lib/Shape";
 Modal.setAppElement("#root");
 
 export const NakedApp = () => {
+  const [name, setName] = useState("scenario");
+  const [width, setWidth] = useState(800);
+  const [height, setHeight] = useState(600);
+  const [scale, setScale] = useState(100);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [now, setNow] = useState(0);
@@ -40,15 +44,26 @@ export const NakedApp = () => {
     setIsModalOpen(false);
   }, [nextX, nextY, now, duration, scenario, movedIndex]);
   return (
-    <div id="main">
+    <div
+      id="main"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignContent: "center",
+      }}
+    >
       <Stage
-        width={800}
-        height={600}
+        width={width}
+        height={height}
         style={{
           borderWidth: 1,
           borderColor: "black",
           borderStyle: "solid",
           cursor: addMode ? "pointer" : "default",
+          width,
+          height,
+          alignSelf: "center",
         }}
         onClick={(event) => {
           if (!addMode) {
@@ -131,15 +146,56 @@ export const NakedApp = () => {
         </button>
       </div>
       <div>
+        <label htmlFor="name">シナリオ名:</label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(event) => {
+            setName(event.target.value);
+          }}
+        />
+        <label htmlFor="width">幅:</label>
+        <input
+          type="number"
+          id="width"
+          min={10}
+          value={width}
+          onChange={(event) => {
+            setWidth(parseInt(event.target.value, 10));
+          }}
+        />
+        <label htmlFor="height">高さ:</label>
+        <input
+          type="number"
+          id="height"
+          min={10}
+          value={height}
+          onChange={(event) => {
+            setHeight(parseInt(event.target.value, 10));
+          }}
+        />
+        <label htmlFor="scale">スケール:</label>
+        <input
+          type="number"
+          id="scale"
+          min={1}
+          value={scale}
+          onChange={(event) => {
+            setScale(parseInt(event.target.value, 10));
+          }}
+        />
         <button
           type="button"
           onClick={() => {
-            const csv = scenarioToCSV(scenario);
+            const csv = scenarioToCSV(scenario, scale);
             const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", "scenario.csv");
+            const filename =
+              scenario.length > 0 ? `${name}.csv` : "scenario.csv";
+            link.setAttribute("download", filename);
             link.click();
           }}
         >

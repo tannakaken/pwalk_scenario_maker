@@ -63,7 +63,7 @@ export const removeMobile = (id: number, scenario: Scenario): Scenario => {
     return newScenario;
 }
 
-export const scenarioToCSV = (scenario: Scenario): string => {
+export const scenarioToCSV = (scenario: Scenario, scale: number): string => {
     let result = ",time";
     for (let i = 0; i < scenario[0].length; i++) {
         result += `,X-${i + 1},Y-${i + 1}`;
@@ -72,7 +72,7 @@ export const scenarioToCSV = (scenario: Scenario): string => {
     scenario.forEach((snapshot, index) => {
         result += `${index},${index}`
         snapshot.forEach((mobile) => {
-            result +=`,${mobile.x},${mobile.y}`;
+            result +=`,${mobile.x / scale},${mobile.y / scale}`;
         })
         result += "\n";
     })
