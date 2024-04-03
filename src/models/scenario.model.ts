@@ -62,3 +62,19 @@ export const removeMobile = (id: number, scenario: Scenario): Scenario => {
     });
     return newScenario;
 }
+
+export const scenarioToCSV = (scenario: Scenario): string => {
+    let result = ",time";
+    for (let i = 0; i < scenario[0].length; i++) {
+        result += `,X-${i + 1},Y-${i + 1}`;
+    }
+    result += "\n";
+    scenario.forEach((snapshot, index) => {
+        result += `${index},${index}`
+        snapshot.forEach((mobile) => {
+            result +=`,${mobile.x},${mobile.y}`;
+        })
+        result += "\n";
+    })
+    return result;
+}

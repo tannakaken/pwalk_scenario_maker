@@ -8,6 +8,7 @@ import {
   addMobile,
   moveMobile,
   removeMobile,
+  scenarioToCSV,
 } from "./models/scenario.model";
 import { Shape } from "konva/lib/Shape";
 
@@ -127,6 +128,22 @@ export const NakedApp = () => {
           }}
         >
           削除
+        </button>
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            const csv = scenarioToCSV(scenario);
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "scenario.csv");
+            link.click();
+          }}
+        >
+          CSV出力
         </button>
       </div>
       <Modal
